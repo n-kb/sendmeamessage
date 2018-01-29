@@ -1,0 +1,167 @@
+<script language="Javascript" src="rsa.js" type="text/javascript"></script>
+<script language="Javascript" src="aes-enc.js" type="text/javascript"></script>
+<script language="Javascript" src="sha1.js" type="text/javascript"></script>
+<script language="Javascript" src="base64.js" type="text/javascript"></script>
+<script language="Javascript" src="PGpubkey.js" type="text/javascript"></script>
+<script language="Javascript" src="mouse.js" type="text/javascript"></script>
+<script language="Javascript" src="PGencode.js" type="text/javascript"></script>
+<style>
+.hide {display:none;}
+</style>
+<script language="Javascript" type="text/javascript">
+
+
+var keytyp = -1;
+var keyid  = '';
+var pubkey = '';
+
+function getkey()
+{
+ var pu=new getPublicKey(document.s.pubkey.value);
+ if(pu.vers == -1) return;
+
+ document.s.vers.value=pu.vers;
+ document.s.user.value=pu.user;
+ document.s.keyid.value=pu.keyid;
+
+ pubkey = pu.pkey.replace(/\n/g,'');
+ document.s.pkey.value=pubkey;
+ document.s.pktype.value=pu.type;
+}
+
+function encrypt()
+{
+	getkey()
+
+ keyid='0000000000000000';
+ if(document.s.keyid.value.length) keyid=document.s.keyid.value;
+ if(keyid.length != 16)
+ {
+   alert('Invalid Key Id');
+   return;
+ } 
+
+ keytyp = -1;
+ if(document.s.pktype.value == 'ELGAMAL') keytyp = 1;
+ if(document.s.pktype.value == 'RSA')     keytyp = 0;
+ if(keytyp == -1)
+ {
+   alert('Unsupported Key Type');
+   return;
+ } 
+
+ var startTime=new Date();
+
+ var text=document.t.text.value+'\r\n';
+ text = s2r(text)
+ document.t.text.value=doEncrypt(keyid, keytyp, pubkey, text);
+
+ var endTime=new Date();
+ document.t.textSize.value=text.length;
+ document.t.howLong.value=(endTime.getTime()-startTime.getTime())/1000.0;
+}
+
+
+</script>
+
+<div class="hide">
+<hr align=center>
+
+<form name="s" action="javascript:getkey()">
+<table width=600 align=center>
+<tr><td>
+<textarea name="pubkey" rows=14 cols=90>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: Mailvelope v0.12.0
+Comment: https://www.mailvelope.com
+
+xsBNBFHVe1wBCACa3C6vdvR+bVyxC8XhcIDGw312Diel8UhMoiq3KDf9XQZe
+u9fXWH6QVjSRy4yehJ8ZMHsAJopJFUYmadKFNG4t95jWo8ZReiPDFfIG2lyX
+QLVoXZIlmuh+t6B8dPc26M8pLd/2rRmqXxsDpkDmPzTk1HyyiOWptJi5j95d
+KjrZxZT0pUcUBiVpbksIEyI7Bw8FRqwMfMKDZo8CCz23m9fX634/Nrym1e0V
+dX6lZuAUOMnkjDeU8rbRwbEAR24mgRWpkN24QezaBGnfPnA4DTisZTos4ClB
+HPbghW+9trqy0MHrnh0hS1unUYz33rMEP1ujR6gBpd0yQtO92lWQcR4LABEB
+AAHNLE5pY29sYXMgS2F5c2VyLUJyaWwgPG4ua2F5c2VyYnJpbEBnbWFpbC5j
+b20+wsB2BBMBAgAgBQJR1XtcAhsjBgsJCAcDAgQVAggDBBYCAwECHgECF4AA
+CgkQa+I+Li1AuMWDNgf+PZOSt0hz4aGgtrJmoO84sRJvWDUCWbWr4SGXTE2F
+Ln0YeSrooW2nesglBzJHvlOZM7Blmg2ymRZz6OixbsCcVX2ukDhsF/bVMExY
+QiE3lEb2EtXUIUCUBLNNnITWo1vCOMpWmtuQrdZFxnRfm+LBK3GydRmXpP3q
+seX9b7RHLFK2md93xZYdvSqC09jsuseBV+Zu7GIoQEgL6tnC2Cr+Fsh14xa8
+KEYhP7Zx3HdYY8YgiovHig+6m8CbWZEdx/PyNUeoKUdj8b9syxnaXBllEWSg
+6bYK60Vld3Eg9U8iQGozZJrFzj1FO9Ufu2mLc3qYw294FL53lPO129t29K41
+Vc7ATQRR1XtcAQgAuW9k4/3l4ii0w8CjJt37XvnGcw+3XFx7FTQmliSbHHKv
+TY4L5DrbEa7gYjbYVILzvw4sdaH4PO2pHdsO5IKsI53ZARX7ZL76xHbx4z38
+PV+U/kzxGUo8SP8KzLYkoBybTaQyBrayw+c4R7phNoX5JPn3DabgbPRoJAgr
+U3HsGSB4vREVI+k/Bj/TPNFArywYQsbFWfyNUj7azG56Vi/z7oYD+5XB5pQa
+H5btQaV/epFlF0QK37oUrqzFztL+V8UuMKtP9yBCgMoYlL2cJIMtjvehwLr/
+/kkF8S29pPl2nOgXHlb2uFxbcYenYZ80kBLU4bMDq/fvlCru0ZvWSe2I0wAR
+AQABwsBfBBgBAgAJBQJR1XtcAhsMAAoJEGviPi4tQLjFzroH/A2W867RfZeU
+nL1Jxw4gXgU8wVqpNyj+qF0JRFnKl+tqLfjxL9RiS8NmwxtE79NK9aWalEEC
+braHgQ7klJjy1xIvlR0nsTbEmdT7HKwK+KVTNm8xhTXNHlsK0QDciM1koV9l
+Ky6Mzmqo0yw80r8jY6/ShQGuolacXmaGfNvaSbftgewfohiTdtfQbQk5NB8v
+AyUAnclLcy1/u93an2qqb92BW4QhLJZc0kSeCnwLvgyw2IhxPjp2gZjpcS9F
+RHBFmxabbT23xY+h6zcgQd4IuKil+I1crAzv/1a8WMsWx9or3fCLD+L499/D
+onMaTCH2piRG1UY9gEV/wqdr73aMftQ=
+=YhW1
+-----END PGP PUBLIC KEY BLOCK-----
+</textarea>
+</td></tr>
+
+<tr><td>
+<input type=submit value="Get Public Key Information">
+</td></tr>
+
+<tr><td>
+<table width="100%">
+<tr><td>
+<tr><td><font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+Version:</font></td>
+<td align=right><input size="40" name="vers" readonly></td></tr>
+
+<tr><td><font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+User ID:</font></td>
+<td align=right><input size=40 name="user" readonly></td></tr>
+
+<tr><td><font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+Key ID (8 bytes in hex): </font></td>
+<td align=right><input size=40 name="keyid" readonly></td></tr>
+
+<tr><td><font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+Public Key type and values:</font></td>
+<td align=right><input size=40 name="pktype" readonly></td></tr>
+
+<tr><td colspan=2 align=right><input size=100 name="pkey" readonly></td></tr>
+</table>
+</td></tr>
+</table>
+</form>
+</div>
+<form name="t" action="javascript:encrypt()">
+<table width=600 align=center>
+<tr><td>
+<font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+Enter your text and click "Encrypt message" below, then send it to me at hi@nkb.fr:
+</font>
+</td></tr>
+
+<tr><td>
+<textarea name="text" rows=16 cols="90">your text for PGP encryption goes here.
+</textarea></td></tr>
+
+<tr><td>
+<table width="100%">
+<tr><td align=left>
+<input type=submit value="Encrypt Message"></td>
+<td align=right><font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+<input size=8 name="textSize"> bytes. This took <input size=4 name="howLong"> seconds.</font>
+</td></tr>
+</table>
+</td></tr>
+
+<tr><td>
+<font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
+This script encrypts your text in base64 (so that humans - me - can't read it). It then encrypts it with my <a href="https://keybase.io/nkb">GPG public key</a> so that machines (on the internet) can't read it if they were to intercept it.
+</font>
+</td></tr>
+</table>
+</form>
